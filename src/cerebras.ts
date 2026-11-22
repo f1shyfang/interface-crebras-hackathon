@@ -38,6 +38,14 @@ const PEARL_BRIDGE = `
 </script>
 `.trim();
 
+export type GenerateOptions = {
+  query: string;
+  refine?: string;
+  previousHtml?: string;
+  recoveryError?: string;
+  preloaded?: { tool: string; result: unknown } | null;
+};
+
 export function getSystemPrompt(): string {
   return SYSTEM_TEMPLATE.replace("{{TOOLS}}", TOOLS_PROMPT);
 }
@@ -84,28 +92,77 @@ export function finalizeHtml(html: string): string {
   return out;
 }
 
+export function looksLikeCompleteHtml(html: string): boolean {
+  const trimmed = html.trim();
+  return (
+    /<!doctype html/i.test(trimmed) &&
+    /<html[\s>]/i.test(trimmed) &&
+    /<\/html>/i.test(trimmed)
+  );
+}
+
+/** Patch incomplete streamed HTML so the browser can paint a partial document. */
+export function progressiveHtml(html: string): string {
+  let out = html.replace(/^\s*```(?:html)?\s*/i, "");
+  if (!/<html[\s>]/i.test(out)) {
+    out = `<!DOCTYPE html><html><head><meta charset="utf-8"><script src="https://cdn.tailwindcss.com"><\/script></head><body>${out}`;
+  }
+  if (!/<\/body>/i.test(out)) out += "</body>";
+  if (!/<\/html>/i.test(out)) out += "</html>";
+  return out;
+}
+
 export function buildUserMessage(
   query: string,
   preloaded?: { tool: string; result: unknown } | null,
+  extras?: {
+    refine?: string;
+    previousHtml?: string;
+    recoveryError?: string;
+  },
 ): string {
-  if (!preloaded) return query;
-  return [
-    query,
-    "",
-    "Preloaded data (use this as the initial dataset in the UI):",
-    "```json",
-    JSON.stringify(
-      { sourceTool: preloaded.tool, data: preloaded.result },
-      null,
-      2,
-    ),
-    "```",
-  ].join("\n");
+  const parts: string[] = [query];
+
+  if (extras?.refine?.trim()) {
+    parts.push(
+      "",
+      "Refinement request — update the previous UI accordingly:",
+      extras.refine.trim(),
+    );
+  }
+
+  if (extras?.recoveryError?.trim()) {
+    parts.push(
+      "",
+      "The previous HTML was broken. Fix these problems and output a complete valid HTML document:",
+      extras.recoveryError.trim(),
+    );
+  }
+
+  if (extras?.previousHtml?.trim()) {
+    const clipped = extras.previousHtml.trim().slice(0, 24_000);
+    parts.push("", "Previous HTML to refine/fix:", "```html", clipped, "```");
+  }
+
+  if (preloaded) {
+    parts.push(
+      "",
+      "Preloaded data (use this as the initial dataset in the UI):",
+      "```json",
+      JSON.stringify(
+        { sourceTool: preloaded.tool, data: preloaded.result },
+        null,
+        2,
+      ),
+      "```",
+    );
+  }
+
+  return parts.join("\n");
 }
 
 export async function* streamUiHtml(
-  query: string,
-  preloaded?: { tool: string; result: unknown } | null,
+  options: GenerateOptions,
 ): AsyncGenerator<string, void, unknown> {
   const client = createCerebrasClient();
   const stream = await client.chat.completions.create({
@@ -113,7 +170,14 @@ export async function* streamUiHtml(
     stream: true,
     messages: [
       { role: "system", content: getSystemPrompt() },
-      { role: "user", content: buildUserMessage(query, preloaded) },
+      {
+        role: "user",
+        content: buildUserMessage(options.query, options.preloaded, {
+          refine: options.refine,
+          previousHtml: options.previousHtml,
+          recoveryError: options.recoveryError,
+        }),
+      },
     ],
   });
 

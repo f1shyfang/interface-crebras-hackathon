@@ -16,6 +16,7 @@ const data = await window.__pearl.call('github.listPRs', {})
 | `github.listRepos` | `{ user?, per_page? }` | Repositories sorted by updated |
 | `github.listIssues` | `{ repo, state?, per_page? }` | Issues for `owner/name` (excludes PRs) |
 | `github.listPRs` | `{ repo?, user?, state?, per_page? }` | PRs for a repo, or the authenticated user's PRs |
+| `rest.request` | `{ url, method?, headers?, body? }` | `{ ok, status, contentType, data }` for public http(s) APIs |
 
 ### Rules for tool usage in generated UI
 
@@ -24,3 +25,4 @@ const data = await window.__pearl.call('github.listPRs', {})
 - Do not hardcode secrets. Never invent API tokens.
 - If a tool fails, show a friendly error in the UI.
 - Keep tool calls inside Alpine/JS event handlers or `init()` — not at parse time unless needed for first paint after preload.
+- For `rest.request`, only call public HTTPS APIs (no localhost / private IPs). Do not send Authorization headers via this tool.

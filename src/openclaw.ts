@@ -1,4 +1,5 @@
 import { githubTools, type ToolArgs } from "./tools/github.ts";
+import { restTools } from "./tools/rest.ts";
 
 export type ActionRequest = {
   tool: string;
@@ -16,7 +17,7 @@ export type ActionResult = {
 const LOCAL_TOOLS: Record<
   string,
   (args: ToolArgs) => Promise<unknown>
-> = { ...githubTools };
+> = { ...githubTools, ...restTools };
 
 export function listLocalTools(): string[] {
   return Object.keys(LOCAL_TOOLS).sort();
