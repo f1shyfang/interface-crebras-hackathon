@@ -1,0 +1,15 @@
+{
+  // wrangler.jsonc for the dynamic-worker sandbox target.
+  //
+  // This Worker is a host for the DynamicWorkerExecutor bundle: the
+  // main Worker (the MCP server) passes a bundle string + JS modules
+  // to it at runtime via env.LOADER(...). The code it runs is the
+  // `code` argument sent by the model through the `code` tool.
+  //
+  // Nothing here is user-editable; the only thing that matters is that
+  // the name matches the LOADER binding in ../wrangler.jsonc.
+  "name": "kimi-codemode-sandbox",
+  "main": "index.js",
+  "compatibility_date": "2026-11-22",
+  "compatibility_flags": ["nodejs_compat"]
+}

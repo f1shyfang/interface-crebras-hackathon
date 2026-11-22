@@ -1,0 +1,36 @@
+{
+  // wrangler.jsonc — deployment spec for the MCP Code Mode Worker.
+  //
+  // Docs: https://developers.cloudflare.com/workers/wrangler/
+  //
+  //   name: the subdomain on <account>.workers.dev
+  //   main: the Worker entrypoint (wrangler's esbuild bundles src/server.ts,
+  //         including the vendored JS under vendor-filesystem/).
+  //   compatibility_date: bump monthly; today's value.
+  //   compatibility_flags:
+  //     nodejs_compat — the vendored @modelcontextprotocol/server-filesystem
+  //       is a Node package that uses `process`, `Buffer`, `fs/promises`,
+  //       `stream` and friends. Without this flag those would be undefined at
+  //       runtime.
+  //   worker_loaders: dynamic worker loader binding, used by DynamicWorkerExecutor
+  //       to spin up one sandboxed Worker per `code` call.
+  "name": "kimi-codemode-filesystem",
+  "main": "src/server.ts",
+  "compatibility_date": "2026-11-22",
+  "compatibility_flags": ["nodejs_compat"],
+
+  "vars": {
+    // Colon-separated extra roots for the /old server if you want a non-empty
+    // default. The /old route runs the vendored server exactly as delivered:
+    // it reads client-provided roots via the MCP protocol (initialize) and
+    // validates every path against them. This var is a hint only — it does
+    // NOT override the client's roots.
+    "ALLOWED_DIRS": "src:dist"
+  },
+
+  "worker_loaders": [
+    {
+      "binding": "LOADER"
+    }
+  ]
+}
