@@ -1,4 +1,4 @@
-## Available tools (PearlEye bridge)
+## Available tools (Interface bridge)
 
 Generated pages can call live tools via:
 

@@ -1,10 +1,14 @@
 import { Database } from "bun:sqlite";
-import { mkdirSync } from "node:fs";
+import { existsSync, mkdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 
 export type ToolArgs = Record<string, unknown>;
 
-const DB_PATH = process.env.STORAGE_DB_PATH || join(process.cwd(), ".pearleye_storage.sqlite");
+const DB_PATH =
+  process.env.STORAGE_DB_PATH ||
+  (existsSync(join(process.cwd(), ".pearleye_storage.sqlite"))
+    ? join(process.cwd(), ".pearleye_storage.sqlite")
+    : join(process.cwd(), ".interface_storage.sqlite"));
 
 let _db: Database | null = null;
 

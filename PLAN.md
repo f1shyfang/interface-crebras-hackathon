@@ -1,10 +1,10 @@
-# PearlEye — Ephemeral UI Generator
+# Interface — Ephemeral UI Generator
 
 > *"Describe what you want to see. See it instantly."*
 
 ## Vision
 
-PearlEye is a single-page app where the user types a natural-language query ("show my GitHub PRs as a kanban board", "show a colour-picker", "find the WiFi settings panel for macOS") and a fully functional, styled UI is generated on-the-fly and rendered in a sandboxed iframe — then thrown away when the user moves on. **Cerebras** provides the sub-second LLM inference that makes the generation feel instant; **OpenClaw** provides the agentic harness that lets the generated UI actually *do* things (call APIs, persist state, run tools).
+Interface is a single-page app where the user types a natural-language query ("show my GitHub PRs as a kanban board", "show a colour-picker", "find the WiFi settings panel for macOS") and a fully functional, styled UI is generated on-the-fly and rendered in a sandboxed iframe — then thrown away when the user moves on. **Cerebras** provides the sub-second LLM inference that makes the generation feel instant; **OpenClaw** provides the agentic harness that lets the generated UI actually *do* things (call APIs, persist state, run tools).
 
 ---
 
@@ -136,7 +136,7 @@ Iframe JS                    Shell (parent)              Backend
 ## File Structure (Target)
 
 ```
-pearleye/
+interface/
 ├── PLAN.md                  ← you are here
 ├── package.json
 ├── tsconfig.json

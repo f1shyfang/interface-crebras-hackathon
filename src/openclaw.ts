@@ -108,7 +108,7 @@ export async function runAction(
       const result = await invokeOpenClaw(tool, args, request.sessionKey);
       return { ok: true, tool, result, source: "openclaw" };
     } catch (err) {
-      // Fall back to local plugins for PearlEye github.* tools if gateway lacks them
+      // Fall back to local plugins for Interface github.* tools if gateway lacks them
       if (LOCAL_TOOLS[tool]) {
         const result = await invokeLocal(tool, args);
         return { ok: true, tool, result, source: "local" };

@@ -1,4 +1,4 @@
-const HISTORY_KEY = "pearleye.history";
+const HISTORY_KEY = "interface.history";
 const HISTORY_LIMIT = 20;
 
 // DOM Elements

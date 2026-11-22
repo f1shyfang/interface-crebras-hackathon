@@ -13,7 +13,7 @@ async function gh<T>(
   const headers = new Headers(init.headers);
   headers.set("Accept", "application/vnd.github+json");
   headers.set("X-GitHub-Api-Version", "2022-11-28");
-  headers.set("User-Agent", "PearlEye");
+  headers.set("User-Agent", "Interface");
   const t = token();
   if (t) headers.set("Authorization", `Bearer ${t}`);
 

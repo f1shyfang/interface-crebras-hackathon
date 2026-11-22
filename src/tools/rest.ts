@@ -45,7 +45,7 @@ export async function restRequest(args: ToolArgs = {}) {
   const url = assertSafeUrl(asString(args.url));
   const headers: Record<string, string> = {
     Accept: "application/json, text/plain;q=0.9, */*;q=0.8",
-    "User-Agent": "PearlEye",
+    "User-Agent": "Interface",
   };
 
   if (args.headers && typeof args.headers === "object" && !Array.isArray(args.headers)) {

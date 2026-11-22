@@ -175,4 +175,4 @@ export default {
   fetch: app.fetch,
 };
 
-console.log(`PearlEye listening on http://localhost:${port}`);
+console.log(`Interface listening on http://localhost:${port}`);
