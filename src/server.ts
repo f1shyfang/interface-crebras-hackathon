@@ -2,6 +2,12 @@ import { Hono } from "hono";
 import { serveStatic } from "hono/bun";
 import { streamSSE } from "hono/streaming";
 import { finalizeHtml, streamUiHtml } from "./cerebras.ts";
+import {
+  listLocalTools,
+  openclawConfigured,
+  prefetchGitHubContext,
+  runAction,
+} from "./openclaw.ts";
 
 const app = new Hono();
 
@@ -31,7 +37,17 @@ app.post("/api/generate", async (c) => {
   return streamSSE(c, async (stream) => {
     let html = "";
     try {
-      for await (const chunk of streamUiHtml(query)) {
+      const preloaded = await prefetchGitHubContext(query);
+      if (preloaded && !stream.aborted) {
+        await stream.writeSSE({
+          event: "status",
+          data: JSON.stringify({
+            message: `Prefetched ${preloaded.tool}`,
+          }),
+        });
+      }
+
+      for await (const chunk of streamUiHtml(query, preloaded)) {
         if (stream.aborted) break;
         html += chunk;
         await stream.writeSSE({
@@ -56,10 +72,41 @@ app.post("/api/generate", async (c) => {
   });
 });
 
+app.post("/api/action", async (c) => {
+  let body: { tool?: unknown; args?: unknown; sessionKey?: unknown };
+  try {
+    body = await c.req.json();
+  } catch {
+    return c.json({ error: "Invalid JSON body" }, 400);
+  }
+
+  const tool = typeof body.tool === "string" ? body.tool.trim() : "";
+  if (!tool) return c.json({ error: "tool is required" }, 400);
+
+  const args =
+    body.args && typeof body.args === "object" && !Array.isArray(body.args)
+      ? (body.args as Record<string, unknown>)
+      : {};
+
+  const sessionKey =
+    typeof body.sessionKey === "string" ? body.sessionKey : undefined;
+
+  try {
+    const result = await runAction({ tool, args, sessionKey });
+    return c.json(result);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Action failed";
+    return c.json({ ok: false, error: message }, 400);
+  }
+});
+
 app.get("/api/health", (c) =>
   c.json({
     ok: true,
     hasApiKey: Boolean(process.env.CEREBRAS_API_KEY),
+    hasGithubToken: Boolean(process.env.GITHUB_TOKEN),
+    openclaw: openclawConfigured(),
+    tools: listLocalTools(),
   }),
 );
 

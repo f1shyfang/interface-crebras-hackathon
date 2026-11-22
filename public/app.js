@@ -106,6 +106,39 @@ function showPreview(html) {
   preview.srcdoc = html;
 }
 
+async function handlePearlCall(event) {
+  const data = event.data;
+  if (!data || data.type !== "pearl:call" || !data.id) return;
+  if (event.source !== preview.contentWindow) return;
+
+  try {
+    const res = await fetch("/api/action", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ tool: data.tool, args: data.args || {} }),
+    });
+    const payload = await res.json().catch(() => ({}));
+    if (!res.ok || payload.ok === false) {
+      throw new Error(payload.error || `Action failed (${res.status})`);
+    }
+    event.source?.postMessage(
+      { type: "pearl:result", id: data.id, result: payload.result },
+      "*",
+    );
+  } catch (err) {
+    event.source?.postMessage(
+      {
+        type: "pearl:result",
+        id: data.id,
+        error: err instanceof Error ? err.message : "Action failed",
+      },
+      "*",
+    );
+  }
+}
+
+window.addEventListener("message", handlePearlCall);
+
 function parseSseChunk(buffer) {
   const events = [];
   const parts = buffer.split("\n\n");
@@ -185,7 +218,9 @@ async function generate(query) {
           payload = { text: evt.data };
         }
 
-        if (evt.event === "token" && payload.text) {
+        if (evt.event === "status" && payload.message) {
+          shimmerStatus.textContent = payload.message;
+        } else if (evt.event === "token" && payload.text) {
           assembled += payload.text;
           chars += payload.text.length;
           shimmerStatus.textContent = `Generating… ${chars.toLocaleString()} chars`;
