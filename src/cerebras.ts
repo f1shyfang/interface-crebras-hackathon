@@ -11,7 +11,7 @@ const TOOLS_PROMPT = readFileSync(
   "utf-8",
 );
 
-const DEFAULT_MODEL = "llama-3.3-70b";
+const DEFAULT_MODEL = "moonshotai-kimi-k3.1-pro-trial";
 
 const PEARL_BRIDGE = `
 <script>

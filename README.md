@@ -5,7 +5,7 @@
 
 [![Cerebras](https://img.shields.io/badge/Cerebras-Inference%20Cloud-FF5A29?style=flat-square&logo=cerebras&logoColor=white)](https://cloud.cerebras.ai)
 [![OpenClaw](https://img.shields.io/badge/Harness-OpenClaw-blue?style=flat-square)](https://github.com/openclaw/openclaw)
-[![Model](https://img.shields.io/badge/Model-Kimi%20K3.1%20Pro%20%7C%20Llama%203.3%2070B-8A2BE2?style=flat-square)](#models)
+[![Model](https://img.shields.io/badge/Model-Kimi%20K3.1%20Pro-8A2BE2?style=flat-square)](#hackathon-details)
 [![Runtime](https://img.shields.io/badge/Runtime-Bun%201.3-black?style=flat-square&logo=bun)](https://bun.sh)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
 [![Tests](https://img.shields.io/badge/Tests-23%20Passing-brightgreen?style=flat-square)](#testing)
@@ -19,10 +19,6 @@
   <br>
   <sub><b>▶ Cerebras (left) completes the UI in sub-second time while GPU (right) streams at typical rates.</b></sub>
 </p>
-
-* **Full MP4 Demo (26 s, 1080p):** [demo/interface.mp4](demo/interface.mp4)
-* **Story Contact Sheet:** [demo/contact.jpg](demo/contact.jpg)
-* **Versus Still Frame:** [demo/money-shot.png](demo/money-shot.png)
 
 ---
 
@@ -53,7 +49,7 @@ flowchart TD
     end
 
     subgraph Cerebras ["Cerebras Inference Cloud"]
-        CER["Cerebras Cloud SDK<br>Kimi K3.1 Pro / Llama 3.3 70B<br>(1,000 - 2,000 tok/s)"]
+        CER["Cerebras Cloud SDK<br>Kimi K3.1 Pro<br>(up to 2,000 tok/s)"]
     end
 
     subgraph Harness ["OpenClaw Tool Harness"]
@@ -133,7 +129,7 @@ Edit `.env`:
 # Cerebras Cloud API Key (required)
 CEREBRAS_API_KEY=csk-...
 
-# Model Selection: Kimi K3.1 Pro or Llama 3.3 70B
+# Model Selection: Kimi K3.1 Pro
 CEREBRAS_MODEL=moonshotai-kimi-k3.1-pro-trial
 
 # Optional GitHub Personal Access Token for live repo tools
@@ -166,7 +162,7 @@ bun run typecheck
 ## Hackathon Details
 
 * **Event:** Cerebras × Kimi K3.1 Pro × OpenClaw Weekend Hackathon
-* **Model ID:** `moonshotai-kimi-k3.1-pro-trial` (or `llama-3.3-70b`)
+* **Model ID:** `moonshotai-kimi-k3.1-pro-trial`
 * **Endpoint:** `https://api.cerebras.ai/v1`
 * **Agent Harness:** OpenClaw (`/tools/invoke` gateway or in-process plugins)
 * **Tags:** `@Cerebras`, `@Kimi_Moonshot`, `#KimiOnCerebras`
