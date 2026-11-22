@@ -35,3 +35,11 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 
 # local agent scratch
 .superpowers/
+
+# SQLite databases
+*.sqlite
+*.sqlite-journal
+*.sqlite-wal
+*.sqlite-shm
+.pearleye_storage.sqlite*
+

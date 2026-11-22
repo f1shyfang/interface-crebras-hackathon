@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PearlEye</title>
+    <title>PearlEye — Instant Ephemeral UI Generator</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -23,7 +23,16 @@
           </div>
         </div>
 
-        <button type="button" class="new-btn" id="new-btn">New query</button>
+        <div class="sidebar-actions">
+          <button type="button" class="new-btn" id="new-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            <span>New query</span>
+          </button>
+          <button type="button" class="library-btn" id="open-library-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"></path><path d="M6 6h10"></path><path d="M6 10h10"></path></svg>
+            <span>Prompt Library</span>
+          </button>
+        </div>
 
         <div class="history-head">
           <span>Recent</span>
@@ -32,6 +41,13 @@
           </button>
         </div>
         <ul class="history-list" id="history-list"></ul>
+
+        <div class="sidebar-footer">
+          <div class="meta-badge">
+            <span class="pulse-dot"></span>
+            <span>Cerebras Fast Inference</span>
+          </div>
+        </div>
       </aside>
 
       <main class="main">
@@ -43,7 +59,7 @@
               name="query"
               type="text"
               autocomplete="off"
-              placeholder="Describe what you want to see…"
+              placeholder="Describe what you want to see… (e.g. 'Show my GitHub PRs as a kanban board')"
               required
             />
             <button type="submit" id="submit-btn">Generate</button>
@@ -51,28 +67,101 @@
         </header>
 
         <section class="stage" aria-live="polite">
+          <!-- Empty State & Starter Grid -->
           <div class="empty" id="empty-state">
-            <p class="empty-title">Describe what you want to see.</p>
-            <p class="empty-copy">
-              PearlEye generates a disposable UI in a sandboxed iframe —
-              colour pickers, dashboards, settings panels, and more.
-            </p>
-            <div class="starters" id="starters">
-              <button type="button" data-query="Interactive colour picker with hex, rgb, and hsl">
-                Colour picker
-              </button>
-              <button type="button" data-query="Show my GitHub PRs as a kanban board with Open, In Review, and Merged columns">
-                My GitHub PRs
-              </button>
-              <button type="button" data-query="macOS-style WiFi settings panel">
-                WiFi settings
-              </button>
-              <button type="button" data-query="Analytics dashboard with charts and KPI cards using mock data">
-                Dashboard
-              </button>
+            <div class="empty-hero">
+              <span class="hero-chip">Instant UI at 1000+ tokens/sec</span>
+              <h1 class="empty-title">Describe what you want to see.</h1>
+              <p class="empty-copy">
+                PearlEye compiles natural language into interactive, styled, single-file UIs in seconds. Powered by Cerebras inference and OpenClaw tool harness.
+              </p>
+            </div>
+
+            <div class="categories-grid" id="starters-container">
+              <div class="cat-card">
+                <div class="cat-title">
+                  <span class="cat-icon">⚡</span>
+                  <h3>Developer & GitHub</h3>
+                </div>
+                <div class="cat-starters">
+                  <button type="button" data-query="Show my GitHub PRs as a kanban board with Open, In Review, and Merged columns">
+                    GitHub PRs Kanban
+                  </button>
+                  <button type="button" data-query="GitHub issue explorer for a repository with filters by state and labels">
+                    Issue Tracker
+                  </button>
+                  <button type="button" data-query="REST API request tester with method selector, URL input, headers editor, and response viewer">
+                    REST API Tester
+                  </button>
+                </div>
+              </div>
+
+              <div class="cat-card">
+                <div class="cat-title">
+                  <span class="cat-icon">📊</span>
+                  <h3>Dashboards & Metrics</h3>
+                </div>
+                <div class="cat-starters">
+                  <button type="button" data-query="SaaS analytics dashboard with KPI cards for MRR, churn, active users, and a bar chart">
+                    SaaS Metrics Dashboard
+                  </button>
+                  <button type="button" data-query="Server telemetry monitor with CPU, Memory, Disk gauges, and live request logs">
+                    Server Health Monitor
+                  </button>
+                </div>
+              </div>
+
+              <div class="cat-card">
+                <div class="cat-title">
+                  <span class="cat-icon">🎨</span>
+                  <h3>Utilities & Tools</h3>
+                </div>
+                <div class="cat-starters">
+                  <button type="button" data-query="Interactive colour picker and palette generator with hex, rgb, and hsl copy buttons">
+                    Colour Palette Tool
+                  </button>
+                  <button type="button" data-query="Markdown scratchpad with live side-by-side rendered preview and word counter">
+                    Markdown Live Editor
+                  </button>
+                  <button type="button" data-query="Regex playground with pattern input, test string, and interactive match highlights">
+                    Regex Matcher
+                  </button>
+                </div>
+              </div>
+
+              <div class="cat-card">
+                <div class="cat-title">
+                  <span class="cat-icon">🗄️</span>
+                  <h3>Stateful Scratch Apps</h3>
+                </div>
+                <div class="cat-starters">
+                  <button type="button" data-query="Persistent kanban task board that saves columns and cards using window.__pearl storage tools">
+                    Persistent Kanban Board
+                  </button>
+                  <button type="button" data-query="Quick notes scratchpad with tags, search, and auto-save via window.__pearl storage.set">
+                    Persistent Notes App
+                  </button>
+                </div>
+              </div>
+
+              <div class="cat-card">
+                <div class="cat-title">
+                  <span class="cat-icon">⚙️</span>
+                  <h3>Panels & Settings</h3>
+                </div>
+                <div class="cat-starters">
+                  <button type="button" data-query="macOS Ventura style WiFi and Network settings panel with signal bars and known networks">
+                    macOS WiFi Settings
+                  </button>
+                  <button type="button" data-query="User profile and security settings panel with 2FA toggle, password change, and notification preferences">
+                    Security & Profile Panel
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
 
+          <!-- Loading Shimmer -->
           <div class="shimmer" id="shimmer" hidden>
             <div class="shimmer-bar"></div>
             <div class="shimmer-grid">
@@ -81,20 +170,129 @@
               <div class="shimmer-block"></div>
               <div class="shimmer-block wide"></div>
             </div>
-            <p class="shimmer-status" id="shimmer-status">Generating…</p>
+            <p class="shimmer-status" id="shimmer-status">Generating with Cerebras…</p>
           </div>
 
-          <iframe
-            id="preview"
-            class="preview"
-            title="Generated UI"
-            sandbox="allow-scripts allow-forms allow-modals"
-            hidden
-          ></iframe>
+          <!-- Active UI Preview Container -->
+          <div class="preview-container" id="preview-container" hidden>
+            <!-- Preview Toolbar -->
+            <div class="preview-toolbar" id="preview-toolbar">
+              <div class="toolbar-left">
+                <span class="status-badge" id="status-badge">
+                  <span class="badge-dot"></span>
+                  <span id="status-badge-text">Ready</span>
+                </span>
+                <span class="stats-badge" id="stats-badge" hidden></span>
+                <span class="repair-badge" id="repaired-badge" hidden>Auto-repaired</span>
+              </div>
+
+              <div class="toolbar-center">
+                <div class="viewport-switcher" role="group" aria-label="Responsive viewport switcher">
+                  <button type="button" class="viewport-btn active" data-viewport="desktop" title="Desktop (Full width)">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                    <span>Desktop</span>
+                  </button>
+                  <button type="button" class="viewport-btn" data-viewport="tablet" title="Tablet (768px)">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+                    <span>Tablet</span>
+                  </button>
+                  <button type="button" class="viewport-btn" data-viewport="mobile" title="Mobile (375px)">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="2" width="12" height="20" rx="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+                    <span>Mobile</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="toolbar-right">
+                <button type="button" class="tool-btn" id="copy-btn" title="Copy full HTML code to clipboard">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                  <span id="copy-btn-text">Copy HTML</span>
+                </button>
+                <button type="button" class="tool-btn" id="open-tab-btn" title="Open generated UI in a clean new browser tab">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                  <span>Open tab</span>
+                </button>
+                <button type="button" class="tool-btn" id="download-btn" title="Download self-contained HTML file">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                  <span>Download</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Error/Repair Notification Banner -->
+            <div class="repair-banner" id="repair-banner" hidden>
+              <div class="repair-info">
+                <span class="warning-icon">⚠️</span>
+                <span id="repair-message">UI error detected</span>
+              </div>
+              <button type="button" class="repair-btn" id="auto-repair-btn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+                <span>Auto-repair with Cerebras</span>
+              </button>
+            </div>
+
+            <!-- Iframe Canvas Wrapper -->
+            <div class="iframe-canvas" id="iframe-canvas">
+              <div class="stream-line" id="stream-line" hidden></div>
+              <iframe
+                id="preview"
+                class="preview viewport-desktop"
+                title="Generated UI"
+                sandbox="allow-scripts allow-forms allow-modals"
+              ></iframe>
+            </div>
+
+            <!-- Floating Refinement Dock -->
+            <div class="refine-dock" id="refine-dock">
+              <div class="refine-chips" id="refine-chips">
+                <span class="chips-label">Quick tweaks:</span>
+                <button type="button" class="chip-btn" data-refine="Switch to a polished dark mode theme">Dark mode</button>
+                <button type="button" class="chip-btn" data-refine="Add an interactive live search and filter bar">Add search filter</button>
+                <button type="button" class="chip-btn" data-refine="Make the layout more compact with smaller padding and fonts">Compact layout</button>
+                <button type="button" class="chip-btn" data-refine="Add an Export to CSV button for any tables or lists">Export CSV</button>
+                <button type="button" class="chip-btn" data-refine="Add smooth transitions and subtle hover micro-interactions">Smooth animations</button>
+              </div>
+
+              <form class="refine-form" id="refine-form">
+                <span class="sparkle-icon" aria-hidden="true">✨</span>
+                <input
+                  id="refine-input"
+                  type="text"
+                  autocomplete="off"
+                  placeholder="Refine this UI… (e.g. 'Add a search bar', 'Make cards draggable', 'Use indigo accent')"
+                  required
+                />
+                <button type="submit" id="refine-btn">
+                  <span>Refine</span>
+                </button>
+              </form>
+            </div>
+          </div>
 
           <div class="error" id="error" hidden></div>
         </section>
       </main>
+    </div>
+
+    <!-- Prompt Library Modal -->
+    <div class="modal-backdrop" id="library-modal" hidden>
+      <div class="modal-dialog" role="dialog" aria-labelledby="modal-title" aria-modal="true">
+        <div class="modal-header">
+          <div>
+            <h2 class="modal-title" id="modal-title">Prompt Library</h2>
+            <p class="modal-subtitle">Curated prompts demonstrating instant generation and OpenClaw tools</p>
+          </div>
+          <button type="button" class="modal-close" id="close-library-btn" aria-label="Close modal">✕</button>
+        </div>
+
+        <div class="modal-search">
+          <input type="text" id="library-filter" placeholder="Filter prompts… (e.g. github, dashboard, table)" autocomplete="off" />
+        </div>
+
+        <div class="modal-content" id="library-cards-container">
+          <!-- Dynamically populated or static filtered cards -->
+        </div>
+      </div>
     </div>
 
     <script src="/app.js" type="module"></script>

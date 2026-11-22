@@ -1,7 +1,11 @@
 import { Hono } from "hono";
 import { serveStatic } from "hono/bun";
 import { streamSSE } from "hono/streaming";
-import { finalizeHtml, streamUiHtml } from "./cerebras.ts";
+import {
+  finalizeHtml,
+  looksLikeCompleteHtml,
+  streamUiHtml,
+} from "./cerebras.ts";
 import {
   listLocalTools,
   openclawConfigured,
@@ -10,9 +14,15 @@ import {
 } from "./openclaw.ts";
 
 const app = new Hono();
+const MAX_RECOVERY_ATTEMPTS = 1;
 
 app.post("/api/generate", async (c) => {
-  let body: { query?: unknown };
+  let body: {
+    query?: unknown;
+    refine?: unknown;
+    previousHtml?: unknown;
+    recoveryError?: unknown;
+  };
   try {
     body = await c.req.json();
   } catch {
@@ -23,6 +33,15 @@ app.post("/api/generate", async (c) => {
   if (!query) {
     return c.json({ error: "query is required" }, 400);
   }
+
+  const refine =
+    typeof body.refine === "string" ? body.refine.trim() : undefined;
+  const previousHtml =
+    typeof body.previousHtml === "string" ? body.previousHtml : undefined;
+  let recoveryError =
+    typeof body.recoveryError === "string"
+      ? body.recoveryError.trim()
+      : undefined;
 
   if (!process.env.CEREBRAS_API_KEY) {
     return c.json(
@@ -35,9 +54,11 @@ app.post("/api/generate", async (c) => {
   }
 
   return streamSSE(c, async (stream) => {
-    let html = "";
     try {
-      const preloaded = await prefetchGitHubContext(query);
+      const preloaded =
+        refine || recoveryError
+          ? null
+          : await prefetchGitHubContext(query);
       if (preloaded && !stream.aborted) {
         await stream.writeSSE({
           event: "status",
@@ -47,20 +68,55 @@ app.post("/api/generate", async (c) => {
         });
       }
 
-      for await (const chunk of streamUiHtml(query, preloaded)) {
-        if (stream.aborted) break;
-        html += chunk;
-        await stream.writeSSE({
-          event: "token",
-          data: JSON.stringify({ text: chunk }),
-        });
-      }
+      let attempt = 0;
+      let html = "";
 
-      if (!stream.aborted) {
-        await stream.writeSSE({
-          event: "done",
-          data: JSON.stringify({ html: finalizeHtml(html) }),
-        });
+      while (attempt <= MAX_RECOVERY_ATTEMPTS && !stream.aborted) {
+        html = "";
+        if (attempt > 0) {
+          await stream.writeSSE({
+            event: "status",
+            data: JSON.stringify({
+              message: "Repairing broken HTML…",
+            }),
+          });
+        }
+
+        for await (const chunk of streamUiHtml({
+          query,
+          refine: attempt === 0 ? refine : undefined,
+          previousHtml:
+            attempt === 0
+              ? previousHtml
+              : finalizeHtml(html || previousHtml || ""),
+          recoveryError: attempt === 0 ? recoveryError : recoveryError,
+          preloaded: attempt === 0 ? preloaded : null,
+        })) {
+          if (stream.aborted) break;
+          html += chunk;
+          await stream.writeSSE({
+            event: "token",
+            data: JSON.stringify({ text: chunk }),
+          });
+        }
+
+        if (stream.aborted) return;
+
+        const finalHtml = finalizeHtml(html);
+        if (looksLikeCompleteHtml(finalHtml) || attempt === MAX_RECOVERY_ATTEMPTS) {
+          await stream.writeSSE({
+            event: "done",
+            data: JSON.stringify({
+              html: finalHtml,
+              repaired: attempt > 0,
+            }),
+          });
+          return;
+        }
+
+        recoveryError =
+          "Document is incomplete or missing <!DOCTYPE html> / </html>. Output a full self-contained HTML page.";
+        attempt += 1;
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : "Generation failed";
