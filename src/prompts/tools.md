@@ -17,6 +17,10 @@ const data = await window.__pearl.call('github.listPRs', {})
 | `github.listIssues` | `{ repo, state?, per_page? }` | Issues for `owner/name` (excludes PRs) |
 | `github.listPRs` | `{ repo?, user?, state?, per_page? }` | PRs for a repo, or the authenticated user's PRs |
 | `rest.request` | `{ url, method?, headers?, body? }` | `{ ok, status, contentType, data }` for public http(s) APIs |
+| `storage.get` | `{ key }` | `{ found, key, value, updated_at }` from persistent local scratch store |
+| `storage.set` | `{ key, value }` | `{ ok, key, updated_at }` saves JSON data to persistent scratch store |
+| `storage.list` | `{ prefix? }` | `{ count, items: [{ key, value, updated_at }] }` list stored keys |
+| `storage.delete` | `{ key }` | `{ ok, key, deleted }` delete stored item |
 
 ### Rules for tool usage in generated UI
 

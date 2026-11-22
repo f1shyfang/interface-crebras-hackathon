@@ -34,6 +34,20 @@ const PEARL_BRIDGE = `
       });
     }
   };
+  window.addEventListener("error", (event) => {
+    parent.postMessage({
+      type: "pearl:error",
+      message: event.message || "Runtime error in generated UI",
+      lineno: event.lineno,
+      colno: event.colno,
+    }, "*");
+  });
+  window.addEventListener("unhandledrejection", (event) => {
+    parent.postMessage({
+      type: "pearl:error",
+      message: event.reason?.message || String(event.reason || "Unhandled promise rejection"),
+    }, "*");
+  });
 })();
 </script>
 `.trim();
