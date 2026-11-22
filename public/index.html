@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PearlEye</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar" id="sidebar">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true"></span>
+          <div>
+            <p class="brand-name">PearlEye</p>
+            <p class="brand-tag">Ephemeral UI</p>
+          </div>
+        </div>
+
+        <button type="button" class="new-btn" id="new-btn">New query</button>
+
+        <div class="history-head">
+          <span>Recent</span>
+          <button type="button" class="text-btn" id="clear-history" hidden>
+            Clear
+          </button>
+        </div>
+        <ul class="history-list" id="history-list"></ul>
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <form class="query-form" id="query-form">
+            <label class="sr-only" for="query-input">Describe a UI</label>
+            <input
+              id="query-input"
+              name="query"
+              type="text"
+              autocomplete="off"
+              placeholder="Describe what you want to see…"
+              required
+            />
+            <button type="submit" id="submit-btn">Generate</button>
+          </form>
+        </header>
+
+        <section class="stage" aria-live="polite">
+          <div class="empty" id="empty-state">
+            <p class="empty-title">Describe what you want to see.</p>
+            <p class="empty-copy">
+              PearlEye generates a disposable UI in a sandboxed iframe —
+              colour pickers, dashboards, settings panels, and more.
+            </p>
+            <div class="starters" id="starters">
+              <button type="button" data-query="Interactive colour picker with hex, rgb, and hsl">
+                Colour picker
+              </button>
+              <button type="button" data-query="Kanban board for software bugs with Open, In Progress, and Done columns">
+                Kanban board
+              </button>
+              <button type="button" data-query="macOS-style WiFi settings panel">
+                WiFi settings
+              </button>
+              <button type="button" data-query="Analytics dashboard with charts and KPI cards using mock data">
+                Dashboard
+              </button>
+            </div>
+          </div>
+
+          <div class="shimmer" id="shimmer" hidden>
+            <div class="shimmer-bar"></div>
+            <div class="shimmer-grid">
+              <div class="shimmer-block tall"></div>
+              <div class="shimmer-block"></div>
+              <div class="shimmer-block"></div>
+              <div class="shimmer-block wide"></div>
+            </div>
+            <p class="shimmer-status" id="shimmer-status">Generating…</p>
+          </div>
+
+          <iframe
+            id="preview"
+            class="preview"
+            title="Generated UI"
+            sandbox="allow-scripts allow-forms allow-modals"
+            hidden
+          ></iframe>
+
+          <div class="error" id="error" hidden></div>
+        </section>
+      </main>
+    </div>
+
+    <script src="/app.js" type="module"></script>
+  </body>
+</html>
